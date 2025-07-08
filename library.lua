@@ -56,7 +56,7 @@ getgenv().library = {
 	keybind_path,
 	panel_open = false,
 
-	directory = "inactivity",
+	directory = "sp4m.wtf",
 	folders = {
 		"/fonts",
 		"/configs",
@@ -2221,6 +2221,10 @@ function library:window(properties)
 
 	function cfg.toggle_list(bool)
 		old_kblist.Visible = bool
+	end
+
+	function cfg.toggle_esp_preview(bool)
+		esp_preview.Visible = bool
 	end
 
 	function cfg.toggle_playerlist(bool)

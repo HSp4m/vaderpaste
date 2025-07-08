@@ -1,141 +1,257 @@
-<br />
+# Vaderpaste V2
+
 <div align="center">
-  <h3 align="center">Vaderpaste User Interface</h3>
-
-  <p align="center">
-    A user interface that supports roblox script executor lua. 
-    <br />
-    <br />
-    <a href="https://raw.githubusercontent.com/i77lhm/vaderpaste/refs/heads/main/example.lua">View Demo</a>
-    &middot;
-    <a href="https://discord.gg/HmwRmmSNSb">Report Bug</a>
-    &middot;
-    <a href="https://discord.gg/HmwRmmSNSb">Request Feature</a>
-  </p>
-
-  <div align="center">
-    <img src="https://github.com/i77lhm/vaderpaste/blob/main/assets/vaderpaste_preview.png?raw=true" alt="Vaderpaste Preview" />
-  </div>
+  <img src="assets/vaderpaste.png" width="500" height="150" alt="Vaderpaste Logo" />
+  <p><em>A (bad coded) csgo styled ui library for Roblox executors</em></p>
+  
+  <img src="assets/vaderpaste_preview.png" width="500" height="500" alt="Vaderpaste Preview" />
 </div>
 
-## Getting Started
+## Table of Contents
 
-This will go through how to use the library in your executor.
+- [Installation](#installation)
+- [Quick Start](#quick-start)
+- [API Reference](#api-reference)
+  - [Window](#window)
+  - [Tab](#tab)
+  - [Section](#section)
+  - [Toggle](#toggle)
+  - [Dropdown](#dropdown)
+  - [Slider](#slider)
+  - [Colorpicker](#colorpicker)
+  - [Keybind](#keybind)
+  - [Hitpart Selector](#hitpart)
+- [Examples](#examples)
 
-### Prerequisites
+## Disclaimer
 
-This is how you import the library through the repository.
+⚠️ The original owner of this GUI is [i77lhm](https://github.com/i77lhm).
 
-- Example:
+## Installation
 
-  ```lua
-  -- EXTRA INFO: You can modify this library its open source. The code is horrendous but have fun.
-  -- In order to make configs of your own make the inactivity text your own text you want
-  -- I may implement theming etc in the future if i come back to this.
+Load the library directly from the repository:
 
-  local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/i77lhm/vaderpaste/refs/heads/main/library.lua"))()
-  local flags = library.flags -- access flags from here.
-  ```
+```lua
+local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/HSp4m/vaderpaste/refs/heads/main/library.lua"))()
+local flags = library.flags -- Access flags from here
+```
 
-### Elements
+## Quick Start
 
-- Window
+Here's a basic example to get you started:
 
-  ```lua
-  local window = library:window({
-    name = "vaderpaste",
-    size = UDim2.fromOffset(500, 650) -- x, y in size
-  })
-  ```
+```lua
+-- Load the library
+local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/HSp4m/vaderpaste/refs/heads/main/library.lua"))()
+local flags = library.flags
 
-- Tab
+-- Create a window
+local window = library:window({
+    name = "My Script",
+    size = UDim2.fromOffset(500, 650)
+})
 
-  ```lua
-  local tab = window:tab({name = "Page"})
-  ```
+-- Create a tab
+local tab = window:tab({name = "Main"})
 
-- Section
+-- Create a section
+local section = tab:section({name = "Features"})
 
-  ```lua
-  local section = tab:section({
-    name = "local",
-  })
-  ```
+-- Add a toggle
+section:toggle({
+    name = "Enable Feature",
+    flag = "feature_enabled",
+    default = false,
+    callback = function(enabled)
+        print("Feature toggled:", enabled)
+    end
+})
+```
 
-- Toggle:
+## API Reference
 
-  ```lua
-  section:toggle({
-       enabled = properties.enabled or nil,
-       name = "Toggle",
-       flag = "ToggleFlag",
-       default = false,
-       callback = function(bool)
-           print(bool)
-           print(flags["ToggleFlag"])
-       end,
-   })
-  ```
+### Window
 
-- Dropdown
+Creates the main window container for your UI.
 
-  ```lua
-  section:dropdown({
-        name = "activation",
-        flag = "legit_aimassistactivation",
-        items = {"mouse 1", "mouse 2", "always"},
-        multi = false,
-        callback = function(option)
-            print(option) -- Will return a table if you set multi to true, allowing you to select multiple items
-            print(flags["legit_aimassistactivation"])
-        end
-    })
-  ```
+```lua
+local window = library:window({
+    name = "Window Title",           -- String: Title displayed in the window
+    size = UDim2.fromOffset(500, 650) -- UDim2: Window dimensions (width, height)
+})
+```
 
-- Slider
+### Tab
 
-  ```lua
-  section:slider({
-        name = "drop prediction inaccuracy",
-        suffix = "%",
-        flag = "legit_bulletdropaccuracy",
-        default = 90,
-        min = 0,
-        max = 100,
-        interval = 0.5,
-        callback = function(num)
-            print(num)
-        end
-    })
-  ```
+Creates a tab within the window for organizing different sections.
 
-- Colorpicker
+```lua
+local tab = window:tab({
+    name = "Tab Name"  -- String: Name displayed on the tab
+})
+```
 
-  ```lua
-  -- For the colorpicker to be seperate, include a name to it and parent it to the section using section:colorpicker
-  -- Else you should do toggle:colorpicker({}) in order to parent it to a toggle.
-  section:colorpicker({
-    name = "Hello!",
-    flag = "enemy_healthnumbercolor",
-    color = Color3.new(1, 1, 1),
+### Section
+
+Creates a section within a tab to group related elements.
+
+```lua
+local section = tab:section({
+    name = "Section Name"  -- String: Section header text
+    side = "left"          -- String: Side of the section "left" or "right"
+})
+```
+
+### Toggle
+
+Creates a toggle switch element.
+
+```lua
+section:toggle({
+    name = "Toggle Name",      -- String: Display name
+    flag = "toggle_flag",      -- String: Unique identifier for accessing value
+    default = false,           -- Boolean: Initial state
+    enabled = true,            -- Boolean: Whether the toggle is interactable (optional)
+    callback = function(state) -- Function (boolean): Called when toggled
+        print("Toggle state:", state)
+        print("Flag value:", flags["toggle_flag"])
+    end
+})
+```
+
+### Dropdown
+
+Creates a dropdown selection element.
+
+```lua
+section:dropdown({
+    name = "Dropdown Name",           -- String: Display name
+    flag = "dropdown_flag",           -- String: Unique identifier
+    items = {"Option 1", "Option 2"}, -- Table: Available options
+    multi = false,                    -- Boolean: Allow multiple selections
+    callback = function(selected)     -- Function: Called when selection changes
+        print("Selected:", selected)
+        print("Flag value:", flags["dropdown_flag"])
+    end
+})
+```
+
+### Slider
+
+Creates a numeric slider element.
+
+```lua
+section:slider({
+    name = "Slider Name",        -- String: Display name
+    flag = "slider_flag",        -- String: Unique identifier
+    suffix = "%",                -- String: Unit suffix (optional)
+    default = 50,                -- Number: Initial value
+    min = 0,                     -- Number: Minimum value
+    max = 100,                   -- Number: Maximum value
+    interval = 1,                -- Number: Step size
+    callback = function(value)   -- Function (number): Called when value changes
+        print("Slider value:", value)
+        print("Flag value:", flags["slider_flag"])
+    end
+})
+```
+
+### Colorpicker
+
+Creates a color selection element.
+
+```lua
+-- Standalone colorpicker
+section:colorpicker({
+    name = "Color Name",              -- String: Display name
+    flag = "color_flag",              -- String: Unique identifier
+    color = Color3.new(1, 1, 1),      -- Color3: Initial color
+    callback = function(color, alpha) -- Function (Color3): Called when color changes
+        print("Color:", color, "Alpha:", alpha)
+        print("Flag color:", flags["color_flag"].Color)
+        print("Flag transparency:", flags["color_flag"].Transparency)
+    end
+})
+
+-- Colorpicker attached to toggle
+section:toggle({...})
+section:colorpicker({
+    -- Remove the 'name' attribute
+    flag = "toggle_color_flag",
+    color = Color3.new(1, 0, 0),
     callback = function(color, alpha)
-        print(color, alpha)
-        print(flags["enemy_healthnumbercolor"].Color, flags["enemy_healthnumbercolor"].Transparency)
+        -- Handle color change
     end
-  })
-  ```
+})
+```
 
-- Keybinds
-  ```lua
-  -- Same logic with the parenting as the colorpicker, same rules apply.
-  section:keybind({
-    name = "UI Bind",
-    flags = "Keybind Flag",
-    default = Enum.KeyCode.End, -- Leave empty for no key.
-    display = "menu", -- Display name for the keybind list
-    callback = function(bool)
-        print(bool)
-        print(flags["Keybind Flag"].Active)
+### Keybind
+
+Creates a keybind element for keyboard shortcuts.
+
+```lua
+-- Standalone keybind
+section:keybind({
+    name = "Keybind Name",           -- String: Display name
+    flag = "keybind_flag",           -- String: Unique identifier
+    default = Enum.KeyCode.F,        -- KeyCode: Initial key (optional)
+    display = "Toggle Feature",      -- String: Display name in keybind list
+    callback = function(active)      -- Function (boolean): Called when key is pressed
+        print("Keybind active:", active)
+        print("Flag active:", flags["keybind_flag"].active)
+        print("Current keybind:", flags["keybind_flag"].key)
     end
-  })
-  ```
+})
+
+-- Keybind attached to toggle
+section:toggle({...})
+section:keybind({
+    -- Remove the 'name' attribute
+    flag = "toggle_keybind_flag",
+    default = Enum.KeyCode.G,
+    display = "Toggle via hotkey",
+    callback = function(active)
+        -- Handle keybind activation
+    end
+})
+```
+
+### Hitpart
+
+Creates a hitpart selector element.
+
+```lua
+-- Multi Hitpart Selector
+
+section:hitpart_picker({
+	name = "Multihitpart Picker",     -- String: Display Name
+	side = "left",                    -- String: "left" or "right"
+	flag = "multihitpart_picker",     -- String: Unique identifier
+	default = { "Head" },             -- Table: Default selected parts
+	multi = true,                     -- Boolean: Allow multiple selections
+	type = "R6",                      -- String: "R6" or "R15"
+	callback = function(parts)        -- Function (table): Called when user selects a part (Always returns a table)
+		table.foreach(parts, print)
+	end,
+})
+
+-- Single Hitpart Selector
+
+section:hitpart_picker({
+	name = "Singlehitpart Picker",     -- String: Display Name
+	side = "left",                     -- String: "left" or "right"
+	flag = "singlehitpart_picker",     -- String: Unique identifier
+	default = { "Head" },              -- Table: Default selected part
+	multi = false,                     -- Boolean: Allow multiple selections
+	type = "R15",                      -- String: "R6" or "R15"
+	callback = function(parts)         -- Function (table): Called when user selects a part (Always returns a table)
+		table.foreach(parts, print)
+	end,
+})
+```
+
+## Examples
+
+### Complete Example
+
+The full example can be found [here](example.lua)

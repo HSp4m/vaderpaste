@@ -1,5 +1,5 @@
 local library =
-	loadstring(game:HttpGet("https://raw.githubusercontent.com/i77lhm/vaderpaste/refs/heads/main/library.lua"))()
+	loadstring(game:HttpGet("https://raw.githubusercontent.com/HSp4m/vaderpaste/refs/heads/main/library.lua"))()
 local flags = library.flags -- access flags from here.
 
 local window = library:window({
@@ -849,6 +849,14 @@ do -- Configs
 		default = false,
 		callback = function(bool)
 			window.toggle_watermark(bool)
+		end,
+	})
+	config:toggle({
+		name = "Esp Preview",
+		flag = "esp_preview",
+		default = false,
+		callback = function(bool)
+			window.toggle_esp_preview(bool)
 		end,
 	})
 	config:keybind({
