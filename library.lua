@@ -173,7 +173,7 @@ end
 if not isfile(library.directory .. "/fonts/main.ttf") then
 	writefile(
 		library.directory .. "/fonts/main.ttf",
-		game:HttpGet("https://github.com/HSp4m/vaderpaste/raw/refs/heads/beta/assets/fonts/smallest_pixel-7.ttf")
+		game:HttpGet("https://github.com/i77lhm/storage/raw/refs/heads/main/fonts/fs-tahoma-8px.ttf")
 	)
 end
 
