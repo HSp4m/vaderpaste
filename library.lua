@@ -62,6 +62,7 @@ getgenv().library = {
 		"/configs",
 	},
 	font,
+	onUnloaded = nil,
 }
 
 local flags = library.flags
@@ -203,6 +204,10 @@ function library.to_screen_point(position)
 end
 
 function library:unload()
+	if typeof(library.onUnloaded) == "function" then
+		library.onUnloaded()
+	end
+
 	library.gui:Destroy()
 
 	for _, connection in library.connections do
