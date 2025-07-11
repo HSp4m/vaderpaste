@@ -2817,7 +2817,7 @@ function library:hitpart_picker(properties)
 	local cfg = {
 		name = properties.name or properties.Name or "Hitpart",
 		side = properties.side or properties.Side or "left",
-		flag = properties.flag or "Hitpart",
+		flag = properties.flag or tostring(math.random(1, 9999999)),
 		default = properties.default or { "Head" },
 		type_char = properties.type or "R6",
 		multi = properties.multi or false,
@@ -3629,17 +3629,17 @@ function library:dropdown(properties)
 		items = properties.items or { "1", "2", "3" },
 		callback = properties.callback or function() end,
 		multi = properties.multi or false,
-		search = properties.search or false, -- New parameter to toggle search bar
+		search = properties.search or false,
 
 		open = false,
 		option_instances = {},
 		multi_items = {},
-		filtered_items = {}, -- Store filtered items for search
+		filtered_items = {},
 
 		previous_holder = self,
 	}
-	cfg.default = properties.default or (cfg.multi and { cfg.items[1] }) or cfg.items[1] or nil
-	cfg.filtered_items = cfg.items -- Initialize filtered items
+	cfg.default = properties.default or nil
+	cfg.filtered_items = cfg.items
 
 	local bottom_components
 	local object
@@ -3967,13 +3967,13 @@ function library:dropdown(properties)
 	if cfg.search and search_bar then
 		local function filter_options(search_text)
 			local filtered = {}
-			
+
 			for _, item in ipairs(cfg.items) do
 				if string.find(string.lower(item), string.lower(search_text)) then
 					table.insert(filtered, item)
 				end
 			end
-			
+
 			cfg.filtered_items = filtered
 			cfg:refresh_options(filtered)
 		end
@@ -3993,7 +3993,7 @@ function library:dropdown(properties)
 		cfg.open = not cfg.open
 
 		cfg.set_visible(cfg.open)
-		
+
 		-- Reset search when opening
 		if cfg.search and search_bar then
 			search_bar.Text = ""
@@ -5258,7 +5258,7 @@ function library:textbox(properties)
 			or "type here...",
 		default = properties.default,
 		clear_on_focus = properties.clearonfocus or false,
-		flag = properties.flag or "SET ME NIGGA",
+		flag = properties.flag or tostring(math.random(1, 9999999)),
 		callback = properties.callback or function() end,
 	}
 
