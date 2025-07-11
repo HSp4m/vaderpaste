@@ -437,6 +437,7 @@ function library:window(properties)
 	-- watermark
 	local __holder = library:create("Frame", {
 		Parent = library.gui,
+		Visible = false,
 		Name = "",
 		BackgroundTransparency = 1,
 		Position = UDim2.new(0, 20, 0, 20),
@@ -1471,6 +1472,7 @@ function library:window(properties)
 
 	local playerlist = library:create("Frame", {
 		Parent = library.gui,
+		Visible = false,
 		Name = "",
 		Active = true,
 		Draggable = true,
@@ -2076,6 +2078,7 @@ function library:window(properties)
 	-- keybind list
 	local old_kblist = library:create("Frame", {
 		Parent = library.gui,
+		Visible = false,
 		Name = "",
 		BorderColor3 = Color3.fromRGB(19, 19, 19),
 		AnchorPoint = Vector2.new(0, 0.5),
@@ -3626,14 +3629,17 @@ function library:dropdown(properties)
 		items = properties.items or { "1", "2", "3" },
 		callback = properties.callback or function() end,
 		multi = properties.multi or false,
+		search = properties.search or false, -- New parameter to toggle search bar
 
 		open = false,
 		option_instances = {},
 		multi_items = {},
+		filtered_items = {}, -- Store filtered items for search
 
 		previous_holder = self,
 	}
 	cfg.default = properties.default or (cfg.multi and { cfg.items[1] }) or cfg.items[1] or nil
+	cfg.filtered_items = cfg.items -- Initialize filtered items
 
 	local bottom_components
 	local object
@@ -3768,15 +3774,74 @@ function library:dropdown(properties)
 		BackgroundColor3 = Color3.fromRGB(38, 38, 38),
 	})
 
-	local options = library:create("Frame", {
+	local content_list = library:create("UIListLayout", {
+		Parent = content,
+		Name = "",
+		Padding = UDim.new(0, 2),
+		SortOrder = Enum.SortOrder.LayoutOrder,
+	})
+
+	local content_padding = library:create("UIPadding", {
+		Parent = content,
+		Name = "",
+		PaddingTop = UDim.new(0, 2),
+		PaddingLeft = UDim.new(0, 2),
+		PaddingRight = UDim.new(0, 2),
+		PaddingBottom = UDim.new(0, 2),
+	})
+
+	-- Search bar (only if enabled)
+	local search_bar
+	if cfg.search then
+		search_bar = library:create("TextBox", {
+			Parent = content,
+			Name = "",
+			FontFace = library.font,
+			TextColor3 = Color3.fromRGB(170, 170, 170),
+			BorderColor3 = Color3.fromRGB(56, 56, 56),
+			Text = "",
+			PlaceholderText = "Search...",
+			PlaceholderColor3 = Color3.fromRGB(120, 120, 120),
+			TextStrokeTransparency = 0.5,
+			Size = UDim2.new(1, 0, 0, 16),
+			TextXAlignment = Enum.TextXAlignment.Left,
+			BorderSizePixel = 0,
+			TextSize = 12,
+			BackgroundColor3 = Color3.fromRGB(28, 28, 28),
+			LayoutOrder = 1,
+		})
+
+		local search_padding = library:create("UIPadding", {
+			Parent = search_bar,
+			Name = "",
+			PaddingLeft = UDim.new(0, 5),
+		})
+	end
+
+	-- ScrollingFrame for options with max height
+	local options_scroll = library:create("ScrollingFrame", {
 		Parent = content,
 		Name = "",
 		BackgroundTransparency = 1,
-		Position = UDim2.new(0, 2, 0, 2),
 		BorderColor3 = Color3.fromRGB(0, 0, 0),
-		Size = UDim2.new(1, -4, 1, -4),
+		Size = UDim2.new(1, 0, 0, 0),
 		BorderSizePixel = 0,
 		BackgroundColor3 = Color3.fromRGB(50, 50, 50),
+		ScrollBarThickness = 6,
+		ScrollBarImageColor3 = Color3.fromRGB(80, 80, 80),
+		AutomaticCanvasSize = Enum.AutomaticSize.Y,
+		CanvasSize = UDim2.new(0, 0, 0, 0),
+		LayoutOrder = 2,
+	})
+
+	local options = library:create("Frame", {
+		Parent = options_scroll,
+		Name = "",
+		BackgroundTransparency = 1,
+		Size = UDim2.new(1, 0, 0, 0),
+		BorderSizePixel = 0,
+		BackgroundColor3 = Color3.fromRGB(50, 50, 50),
+		AutomaticSize = Enum.AutomaticSize.Y,
 	})
 
 	local UIListLayout = library:create("UIListLayout", {
@@ -3792,28 +3857,14 @@ function library:dropdown(properties)
 		PaddingBottom = UDim.new(0, 4),
 	})
 
-	-- local op3 = library:create("TextButton", {
-	--     Parent = options,
-	--     Name = "",
-	--     FontFace = library.font,
-	--     TextColor3 = Color3.fromRGB(170, 170, 170),
-	--     BorderColor3 = Color3.fromRGB(56, 56, 56),
-	--     Text = "option 3",
-	--     TextStrokeTransparency = 0.5,
-	--     Size = UDim2.new(1, 0, 0, 14),
-	--     TextXAlignment = Enum.TextXAlignment.Left,
-	--     Position = UDim2.new(0, 2, 0, 2),
-	--     BorderSizePixel = 0,
-	--     TextSize = 12,
-	--     BackgroundColor3 = Color3.fromRGB(65, 65, 65)
-	-- })
+	-- Update scroll frame size based on content
+	local function update_scroll_size()
+		local max_height = 150 -- Maximum height for dropdown
+		local content_height = UIListLayout.AbsoluteContentSize.Y + 8 -- Add padding
+		options_scroll.Size = UDim2.new(1, 0, 0, math.min(content_height, max_height))
+	end
 
-	-- local UIPadding = library:create("UIPadding", {
-	--     Parent = op3,
-	--     Name = "",
-	--     PaddingLeft = UDim.new(0, 5)
-	-- })
-	--
+	UIListLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(update_scroll_size)
 
 	function cfg.set_visible(bool)
 		content_inline.Visible = bool
@@ -3832,6 +3883,7 @@ function library:dropdown(properties)
 			end
 
 			library.current_element_open = cfg
+			update_scroll_size()
 		end
 	end
 
@@ -3908,13 +3960,46 @@ function library:dropdown(properties)
 			end)
 		end
 
-		dropdown.Text = ""
+		update_scroll_size()
+	end
+
+	-- Search functionality
+	if cfg.search and search_bar then
+		local function filter_options(search_text)
+			local filtered = {}
+			
+			for _, item in ipairs(cfg.items) do
+				if string.find(string.lower(item), string.lower(search_text)) then
+					table.insert(filtered, item)
+				end
+			end
+			
+			cfg.filtered_items = filtered
+			cfg:refresh_options(filtered)
+		end
+
+		search_bar:GetPropertyChangedSignal("Text"):Connect(function()
+			local search_text = search_bar.Text
+			if search_text == "" then
+				cfg.filtered_items = cfg.items
+				cfg:refresh_options(cfg.items)
+			else
+				filter_options(search_text)
+			end
+		end)
 	end
 
 	dropdown.MouseButton1Click:Connect(function()
 		cfg.open = not cfg.open
 
 		cfg.set_visible(cfg.open)
+		
+		-- Reset search when opening
+		if cfg.search and search_bar then
+			search_bar.Text = ""
+			cfg.filtered_items = cfg.items
+			cfg:refresh_options(cfg.items)
+		end
 	end)
 
 	cfg:refresh_options(cfg.items)
