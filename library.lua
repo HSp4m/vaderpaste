@@ -3639,6 +3639,7 @@ function library:dropdown(properties)
 		flag = properties.flag or tostring(math.random(1, 9999999)),
 
 		items = properties.items or { "1", "2", "3" },
+		images = properties.images or {},
 		callback = properties.callback or function() end,
 		multi = properties.multi or false,
 		search = properties.search or false,
@@ -3697,7 +3698,6 @@ function library:dropdown(properties)
 		self.bottom_holder.Parent.TextYAlignment = Enum.TextYAlignment.Top
 	end
 
-	-- Instances
 	local dropdown_inline = library:create("Frame", {
 		Parent = cfg.name and bottom_components or self.bottom_holder,
 		Name = "",
@@ -3802,7 +3802,6 @@ function library:dropdown(properties)
 		PaddingBottom = UDim.new(0, 2),
 	})
 
-	-- Search bar (only if enabled)
 	local search_bar
 	if cfg.search then
 		search_bar = library:create("TextBox", {
@@ -3919,14 +3918,22 @@ function library:dropdown(properties)
 
 	function cfg:refresh_options(refreshed_list)
 		for _, v in next, cfg.option_instances do
-			v:Destroy()
+			v.Parent:Destroy()
 		end
 
 		cfg.option_instances = {}
 
 		for i, v in next, refreshed_list do
-			local op3 = library:create("TextButton", {
+			local option_container = library:create("Frame", {
 				Parent = options,
+				Name = "",
+				BackgroundTransparency = 1,
+				Size = UDim2.new(1, 0, 0, 14),
+				BorderSizePixel = 0,
+			})
+
+			local op3 = library:create("TextButton", {
+				Parent = option_container,
 				Name = "",
 				FontFace = library.font,
 				TextColor3 = Color3.fromRGB(170, 170, 170),
@@ -3934,21 +3941,60 @@ function library:dropdown(properties)
 				Text = v,
 				BackgroundTransparency = 1,
 				TextStrokeTransparency = 0.5,
-				Size = UDim2.new(1, 0, 0, 14),
+				Size = UDim2.new(1, 0, 1, 0),
 				TextXAlignment = Enum.TextXAlignment.Left,
-				Position = UDim2.new(0, 2, 0, 2),
 				BorderSizePixel = 0,
 				TextSize = 12,
 				BackgroundColor3 = Color3.fromRGB(65, 65, 65),
 			})
 
-			local UIPadding = library:create("UIPadding", {
-				Parent = op3,
-				Name = "",
-				PaddingLeft = UDim.new(0, 5),
-			})
+			local has_image = cfg.images[v] ~= nil
+			
+			if has_image then
+				local image_label = library:create("ImageLabel", {
+					Parent = option_container,
+					Name = "",
+					Image = tostring(cfg.images[v]),
+					Size = UDim2.new(0, 12, 0, 12),
+					Position = UDim2.new(0, 2, 0.5, -6),
+					BackgroundTransparency = 1,
+					ScaleType = Enum.ScaleType.Fit,
+					ZIndex = 2,
+				})
+				
+				local text_padding = library:create("UIPadding", {
+					Parent = op3,
+					Name = "",
+					PaddingLeft = UDim.new(0, 18),
+				})
+			else
+				local text_padding = library:create("UIPadding", {
+					Parent = op3,
+					Name = "",
+					PaddingLeft = UDim.new(0, 5),
+				})
+			end
 
 			table.insert(cfg.option_instances, op3)
+
+			op3.MouseEnter:Connect(function()
+				if op3.BackgroundTransparency == 1 then
+					op3.BackgroundTransparency = 0.7
+				end
+			end)
+
+			op3.MouseLeave:Connect(function()
+				local is_selected = false
+				if cfg.multi then
+					is_selected = table.find(cfg.multi_items, op3.Text) ~= nil
+				else
+					is_selected = flags[cfg.flag] == op3.Text
+				end
+				
+				if not is_selected then
+					op3.BackgroundTransparency = 1
+				end
+			end)
 
 			op3.MouseButton1Down:Connect(function()
 				if cfg.multi then
@@ -3973,7 +4019,6 @@ function library:dropdown(properties)
 		update_scroll_size()
 	end
 
-	-- Search functionality
 	if cfg.search and search_bar then
 		local function filter_options(search_text)
 			local filtered = {}
@@ -4004,7 +4049,6 @@ function library:dropdown(properties)
 
 		cfg.set_visible(cfg.open)
 
-		-- Reset search when opening
 		if cfg.search and search_bar then
 			search_bar.Text = ""
 			cfg.filtered_items = cfg.items
