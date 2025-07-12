@@ -458,7 +458,7 @@ function library:window(properties)
 		Active = true,
 		Draggable = true,
 		BorderColor3 = Color3.fromRGB(0, 0, 0),
-		Size = UDim2.new(0, ((#animated_text / 2) * 5) + 13, 0, 40),
+		Size = UDim2.new(0, ((#animated_text / 2) * 6) + 13, 0, 40),
 		BackgroundColor3 = Color3.fromRGB(40, 40, 40),
 	})
 
@@ -528,7 +528,7 @@ function library:window(properties)
 		FontFace = library.font,
 		TextColor3 = Color3.fromRGB(170, 170, 170),
 		BorderColor3 = Color3.fromRGB(0, 0, 0),
-		Text = "ledger.live",
+		Text = "sp4m.wtf",
 		TextStrokeTransparency = 0.5,
 		Size = UDim2.new(0, 0, 1, 0),
 		Position = UDim2.new(0, 8, 0, 0),
@@ -960,6 +960,7 @@ function library:window(properties)
 		Size = UDim2.new(1, 0, 1, 0),
 		ZIndex = 50,
 		BorderSizePixel = 0,
+		BackgroundTransparency = 1,
 		BackgroundColor3 = Color3.fromRGB(255, 255, 255),
 	})
 
@@ -1128,6 +1129,7 @@ function library:window(properties)
 		BorderColor3 = Color3.fromRGB(0, 0, 0),
 		BorderSizePixel = 0,
 		AutomaticSize = Enum.AutomaticSize.Y,
+		Visible = false,
 		BackgroundColor3 = Color3.fromRGB(255, 255, 255),
 	})
 
@@ -1182,6 +1184,7 @@ function library:window(properties)
 		AutomaticSize = Enum.AutomaticSize.Y,
 		ZIndex = 50,
 		TextSize = 12,
+		Visible = false,
 		Size = UDim2.new(1, 0, 0, 4),
 	})
 
@@ -1209,6 +1212,7 @@ function library:window(properties)
 		BorderColor3 = Color3.fromRGB(0, 0, 0),
 		BorderSizePixel = 0,
 		AutomaticSize = Enum.AutomaticSize.Y,
+		Visible = false,
 		BackgroundColor3 = Color3.fromRGB(255, 255, 255),
 	})
 
@@ -1235,6 +1239,7 @@ function library:window(properties)
 		Position = UDim2.new(0, -14, 0, -2),
 		Size = UDim2.new(0, 4, 1, 4),
 		BorderSizePixel = 0,
+		Visible = false,
 		BackgroundColor3 = Color3.fromRGB(0, 0, 0),
 	})
 
@@ -1294,6 +1299,7 @@ function library:window(properties)
 		Position = UDim2.new(0, -8, 0, -2),
 		Size = UDim2.new(0, 4, 1, 4),
 		BorderSizePixel = 0,
+		Visible = false,
 		BackgroundColor3 = Color3.fromRGB(0, 0, 0),
 	})
 
@@ -1356,6 +1362,7 @@ function library:window(properties)
 		Parent = line_holder,
 		Name = "",
 		Rotation = -180,
+		Enabled = false,
 		Transparency = NumberSequence.new({
 			NumberSequenceKeypoint.new(0, 0.5),
 			NumberSequenceKeypoint.new(1, 0.5),
@@ -3823,7 +3830,6 @@ function library:dropdown(properties)
 		})
 	end
 
-	-- ScrollingFrame for options with max height
 	local options_scroll = library:create("ScrollingFrame", {
 		Parent = content,
 		Name = "",
@@ -3862,10 +3868,9 @@ function library:dropdown(properties)
 		PaddingBottom = UDim.new(0, 4),
 	})
 
-	-- Update scroll frame size based on content
 	local function update_scroll_size()
-		local max_height = 150 -- Maximum height for dropdown
-		local content_height = UIListLayout.AbsoluteContentSize.Y + 8 -- Add padding
+		local max_height = 150
+		local content_height = UIListLayout.AbsoluteContentSize.Y + 8
 		options_scroll.Size = UDim2.new(1, 0, 0, math.min(content_height, max_height))
 	end
 
