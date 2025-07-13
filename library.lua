@@ -2252,6 +2252,7 @@ function library:window(properties)
 
 	function cfg.set_menu_visibility(bool, pl)
 		WINDOW_PATH.Visible = bool
+		library.panel_open = bool
 
 		playerlist.Visible = flags["player_list"] and bool or false
 	end
