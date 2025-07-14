@@ -94,6 +94,7 @@ local themes = {
 			["ImageColor3"] = {},
 			["BorderColor3"] = {},
 			["ScrollBarImageColor3"] = {},
+			["Color"] = {},
 		},
 		["contrast"] = {
 			["Color"] = {},
@@ -392,25 +393,25 @@ function library:apply_theme(instance, theme, property)
 end
 
 function library:update_theme(theme, color)
-    for _, property in next, themes.utility[theme] do
-        for m, object in next, property do
-            if object[_] == themes.preset[theme] then
-                object[_] = color
-            elseif object.ClassName == "UIGradient" then
-                if _ == "Color" then
-                    object[_] = ColorSequence.new({
-                        ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 255, 255)),
-                        ColorSequenceKeypoint.new(0.01, color),
-                        ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 255, 255)),
-                    })
-                else
-                    object[_] = color
-                end
-            end
-        end
-    end
+	for _, property in next, themes.utility[theme] do
+		for m, object in next, property do
+			if object[_] == themes.preset[theme] then
+				object[_] = color
+			elseif object.ClassName == "UIGradient" then
+				if _ == "Color" then
+					object[_] = ColorSequence.new({
+						ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 255, 255)),
+						ColorSequenceKeypoint.new(0.01, color),
+						ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 255, 255)),
+					})
+				else
+					object[_] = color
+				end
+			end
+		end
+	end
 
-    themes.preset[theme] = color
+	themes.preset[theme] = color
 end
 
 function library:connection(signal, callback)
@@ -559,7 +560,7 @@ function library:window(properties)
 			ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 255, 255)),
 		}),
 	})
-	
+
 	library:apply_theme(TEXT_ANIMATION_GRADIENT, "accent", "Color")
 
 	local UIPadding = library:create("UIPadding", {
@@ -3962,7 +3963,7 @@ function library:dropdown(properties)
 			})
 
 			local has_image = cfg.images[v] ~= nil
-			
+
 			if has_image then
 				local image_label = library:create("ImageLabel", {
 					Parent = option_container,
@@ -3974,7 +3975,7 @@ function library:dropdown(properties)
 					ScaleType = Enum.ScaleType.Fit,
 					ZIndex = 2,
 				})
-				
+
 				local text_padding = library:create("UIPadding", {
 					Parent = op3,
 					Name = "",
@@ -4003,7 +4004,7 @@ function library:dropdown(properties)
 				else
 					is_selected = flags[cfg.flag] == op3.Text
 				end
-				
+
 				if not is_selected then
 					op3.BackgroundTransparency = 1
 				end
