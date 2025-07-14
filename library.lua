@@ -469,7 +469,7 @@ function library:window(properties)
 		Active = true,
 		Draggable = true,
 		BorderColor3 = Color3.fromRGB(0, 0, 0),
-		Size = UDim2.new(0, ((#animated_text / 2) * 6) + 13, 0, 40),
+		Size = UDim2.new(0, ((#animated_text / 2) * 6.3) + 13, 0, 40),
 		BackgroundColor3 = Color3.fromRGB(40, 40, 40),
 	})
 
