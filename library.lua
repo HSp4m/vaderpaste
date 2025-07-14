@@ -392,15 +392,25 @@ function library:apply_theme(instance, theme, property)
 end
 
 function library:update_theme(theme, color)
-	for _, property in next, themes.utility[theme] do
-		for m, object in next, property do
-			if object[_] == themes.preset[theme] or object.ClassName == "UIGradient" then
-				object[_] = color
-			end
-		end
-	end
+    for _, property in next, themes.utility[theme] do
+        for m, object in next, property do
+            if object[_] == themes.preset[theme] then
+                object[_] = color
+            elseif object.ClassName == "UIGradient" then
+                if _ == "Color" then
+                    object[_] = ColorSequence.new({
+                        ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 255, 255)),
+                        ColorSequenceKeypoint.new(0.01, color),
+                        ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 255, 255)),
+                    })
+                else
+                    object[_] = color
+                end
+            end
+        end
+    end
 
-	themes.preset[theme] = color
+    themes.preset[theme] = color
 end
 
 function library:connection(signal, callback)
@@ -549,6 +559,8 @@ function library:window(properties)
 			ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 255, 255)),
 		}),
 	})
+	
+	library:apply_theme(TEXT_ANIMATION_GRADIENT, "accent", "Color")
 
 	local UIPadding = library:create("UIPadding", {
 		Parent = tabs,
