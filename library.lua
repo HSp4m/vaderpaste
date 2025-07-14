@@ -1492,6 +1492,8 @@ function library:window(properties)
 	local player_buttons = {}
 
 	function library.get_priority(player)
+		if not player then return end
+		if not player_buttons[player.Name] then return end
 		return player_buttons[player.Name].priority.Text
 	end
 
