@@ -449,7 +449,7 @@ function library:set_config_path(v)
 		return
 	end
 	local path
-	path = library.directory .. "/config/" .. v
+	path = library.directory .. "/configs/" .. v
 
 	if not isfolder(path) then
 		makefolder(path)
