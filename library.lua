@@ -66,8 +66,8 @@ getgenv().menulib = {
 	onUnloaded = nil,
 }
 
-local flags = library.flags
-local config_flags = library.config_flags
+local flags = menulib.flags
+local config_flags = menulib.config_flags
 
 local themes = {
 	preset = {
@@ -167,7 +167,7 @@ local keys = {
 	[Enum.KeyCode.Space] = "SPC",
 }
 
-library.__index = library
+library.__index = menulib
 
 for _, path in next, library.folders do
 	makefolder(library.directory .. path)
