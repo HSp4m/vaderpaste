@@ -35,12 +35,12 @@ local floor = math.floor
 local min = math.min
 local abs = math.abs
 
-if getgenv().library then
-	getgenv().library:unload()
+if getgenv().menulib then
+	getgenv().menulib:unload()
 end
 
 -- library init
-getgenv().library = {
+getgenv().menulib = {
 	flags = {},
 	config_flags = {},
 	connections = {},
@@ -61,6 +61,7 @@ getgenv().library = {
 		"/fonts",
 		"/configs",
 	},
+	config_path = "sp4m.wtf/configs",
 	font,
 	onUnloaded = nil,
 }
@@ -219,7 +220,7 @@ function library:unload()
 		item:Destroy()
 	end
 
-	getgenv().library = nil
+	getgenv().menulib = nil
 end
 
 function library:convert_string_rgb(str)
@@ -340,8 +341,8 @@ function library:config_list_update()
 
 	local list = {}
 
-	for idx, file in next, listfiles(library.directory .. "/configs") do
-		local name = file.split(file, "/configs/")[2]
+	for idx, file in next, listfiles(library.config_path) do
+		local name = file.split(file, library.config_path)[2]
 		name = name.split(name, ".cfg")[1]
 		list[#list + 1] = name
 	end
@@ -442,6 +443,20 @@ library.gui = library:create("ScreenGui", {
 })
 
 -- library functions
+function library:set_config_path(path)
+	if not path then
+		warn("Path cannot be nil (set_config_path)")
+		return
+	end
+	local path
+	path = library.directory .. "/config/" .. path
+
+	if not isfolder(path) then
+		makefolder(path)
+	end
+
+	library.config_path = path
+end
 function library:window(properties)
 	local cfg = {
 		name = properties.Name or properties.name or properties.Title or properties.title or "sp4m.wtf",
@@ -1492,8 +1507,12 @@ function library:window(properties)
 	local player_buttons = {}
 
 	function library.get_priority(player)
-		if not player then return end
-		if not player_buttons[player.Name] then return end
+		if not player then
+			return
+		end
+		if not player_buttons[player.Name] then
+			return
+		end
 		return player_buttons[player.Name].priority.Text
 	end
 
