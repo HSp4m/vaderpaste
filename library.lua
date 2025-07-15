@@ -457,6 +457,16 @@ function library:set_config_path(path)
 
 	library.config_path = path
 end
+
+function library:get_config_path()
+	if not library.config_path then
+		warn("Config path is not set (get_config_path)")
+		return nil
+	end
+
+	return library.config_path
+end
+
 function library:window(properties)
 	local cfg = {
 		name = properties.Name or properties.name or properties.Title or properties.title or "sp4m.wtf",
