@@ -443,13 +443,13 @@ library.gui = library:create("ScreenGui", {
 })
 
 -- library functions
-function library:set_config_path(path)
-	if not path then
+function library:set_config_path(v)
+	if not v then
 		warn("Path cannot be nil (set_config_path)")
 		return
 	end
 	local path
-	path = library.directory .. "/config/" .. path
+	path = library.directory .. "/config/" .. v
 
 	if not isfolder(path) then
 		makefolder(path)
