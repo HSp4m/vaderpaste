@@ -35,12 +35,12 @@ local floor = math.floor
 local min = math.min
 local abs = math.abs
 
-if getgenv().menulib then
-	getgenv().menulib:unload()
+if getgenv().library then
+	getgenv().library:unload()
 end
 
 -- library init
-getgenv().menulib = {
+getgenv().library = {
 	flags = {},
 	config_flags = {},
 	connections = {},
@@ -66,8 +66,8 @@ getgenv().menulib = {
 	onUnloaded = nil,
 }
 
-local flags = menulib.flags
-local config_flags = menulib.config_flags
+local flags = library.flags
+local config_flags = library.config_flags
 
 local themes = {
 	preset = {
@@ -167,7 +167,7 @@ local keys = {
 	[Enum.KeyCode.Space] = "SPC",
 }
 
-library.__index = menulib
+library.__index = library
 
 for _, path in next, library.folders do
 	makefolder(library.directory .. path)
